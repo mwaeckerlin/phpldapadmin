@@ -10,7 +10,13 @@ EXPOSE 443
 RUN apt-get update
 RUN apt-get install -y phpldapadmin
 
-CMD DOMAIN="dc=${LDAP_ENV_DOMAIN//./,dc=}"; \
+CMD set -x
+    if test -z "${LDAP_ENV_DOMAIN}"; then \
+      echo "**** ERROR: please link to an mwaeckerlin/openldap container" 1>&2; \
+      echo "           e.g.: --link my-openldap-container:ldap"; \
+      exit 1; \
+    fi; \
+    DOMAIN="dc=${LDAP_ENV_DOMAIN//./,dc=}"; \
     sed -e 's|\(\$servers->setValue('"'"'server'"'"','"'"'host'"'"','"'"'\).*\('"'"');\)|\1ldap\2|' \
         -e 's|\(\$servers->setValue('"'"'server'"'"','"'"'base'"'"',array('"'"'\).*\('"'"'));\)|\1'"${DOMAIN}"'\2|' \
         -e 's|\(\$servers->setValue('"'"'login'"'"','"'"'bind_id'"'"','"'"'\).*\('"'"');\)|\1'"cn=admin,${DOMAIN}"'\2|' \
