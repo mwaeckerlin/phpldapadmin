@@ -14,4 +14,7 @@ sed -e 's|\(\$servers->setValue('"'"'server'"'"','"'"'host'"'"','"'"'\).*\('"'"'
     -e 's|.*\(\$config->custom->appearance\['"'"'hide_template_warning'"'"'\] = \).*\(;\)|\1true\2|' \
     -i /etc/phpldapadmin/config.php
 
+if test -f /run/apache2/apache2.pid; then
+    rm /run/apache2/apache2.pid;
+fi
 apache2ctl -DFOREGROUND
